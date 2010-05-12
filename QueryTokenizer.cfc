@@ -2,7 +2,7 @@
 
 	<cfscript>
 		variables.class = {};
-		variables.class.RESQLToken = "\(|\)|'|""|`|\*|,|<=|<|>=|>|<>|=|[+]|!=";
+		variables.class.RESQLToken = "\(|\)|'|""|`|\*|,|<>|<=|<|>=|>|=|[+]|!=";
 		variables.class.RESQLTerminal = variables.class.RESQLToken & "|;|[[:space:]]+";
 	</cfscript>
 	
@@ -12,8 +12,7 @@
 			var loc = { 
 				  result = []
 			};
-			loc.sql = REReplace(Trim(arguments.sql), "([[:space:]]+)", " ", "all"); // remove trailing spaces and condense multiple spaces into one
-			loc.sql = REReplace(loc.sql, "[[:space:]]+,", "\1,", "all"); // remove all spaces in front of commas
+			loc.sql = REReplace(Trim(arguments.sql), "([[:space:]]*,)", ",", "all"); // remove all spaces in front of commas
 			
 			loc.part = $matchSqlPart(string=loc.sql);
 			
