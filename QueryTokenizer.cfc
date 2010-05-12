@@ -9,11 +9,9 @@
 	<cffunction name="tokenizeSql" returntype="any" output="false" access="public">
 		<cfargument name="sql" type="string" required="true" />
 		<cfscript>
-			var loc = { 
-				  result = []
-			};
+			var loc = {};
+			loc.result = [];
 			loc.sql = REReplace(Trim(arguments.sql), "([[:space:]]*,)", ",", "all"); // remove all spaces in front of commas
-			
 			loc.part = $matchSqlPart(string=loc.sql);
 			
 			while (Len(loc.part))
@@ -44,7 +42,7 @@
 				else
 					loc.sql = "";
 					
-				loc.part = $matchSqlPart(string=loc.sql, length=ArrayLen(loc.result));
+				loc.part = $matchSqlPart(string=loc.sql);
 				
 				if (!Len(loc.part))
 					ArrayAppend(loc.result, loc.sql);
@@ -55,50 +53,40 @@
 	
 	<cffunction name="$matchSqlPart" output="false" access="public" returntype="string">
 		<cfargument name="string" type="string" required="true" />
-		<cfargument name="length" type="numeric" required="false" default="0" />
 		<cfscript>
-			var loc = { tokenArray = [] };
+			var tokenArray = [];
 			
-			loc.tokenArray = REMatch("^(#variables.class.RESQLToken#)", arguments.string);
-			if (ArrayLen(loc.tokenArray)) return loc.tokenArray[1];
+			tokenArray = REMatch("^(#variables.class.RESQLToken#)", arguments.string);
+			if (ArrayLen(tokenArray)) return tokenArray[1];
 			
-			loc.tokenArray = REMatch("^(#variables.class.RESQLToken#)(#variables.class.RESQLTerminal#)", arguments.string);
-			if (ArrayLen(loc.tokenArray)) return loc.tokenArray[1];
+			tokenArray = REMatch("^(#variables.class.RESQLToken#)(#variables.class.RESQLTerminal#)", arguments.string);
+			if (ArrayLen(tokenArray)) return tokenArray[1];
 			
-			loc.tokenArray = REMatch("^(#variables.class.RESQLToken#).", arguments.string);
-			if (ArrayLen(loc.tokenArray)) return loc.tokenArray[1];
+			tokenArray = REMatch("^(#variables.class.RESQLToken#).", arguments.string);
+			if (ArrayLen(tokenArray)) return tokenArray[1];
 			
-			loc.tokenArray = REMatch("^([a-zA-Z0-9\-_\.]+?)(#variables.class.RESQLTerminal#)", arguments.string);
-			if (ArrayLen(loc.tokenArray)) return loc.tokenArray[1];
+			tokenArray = REMatch("^([a-zA-Z0-9\-_\.]+?)(#variables.class.RESQLTerminal#)", arguments.string);
+			if (ArrayLen(tokenArray)) return tokenArray[1];
 		</cfscript>
 		<cfreturn "" />
 	</cffunction>
 	
 	<cffunction name="$singleQuoteString" output="false" access="public" returntype="string">
 		<cfargument name="string" type="string" required="true" />
-		<cfscript>
-			var loc = {};
-			loc.matches = REMatch("^'(.*?([']{2}|(\\'))?)+'.", arguments.string);
-		</cfscript>
-		<cfreturn loc.matches[1] />
+		<cfset var matches = REMatch("^'(.*?([']{2}|(\\'))?)+'.", arguments.string) />
+		<cfreturn matches[1] />
 	</cffunction>
 	
 	<cffunction name="$backQuoteString" output="false" access="public" returntype="string">
 		<cfargument name="string" type="string" required="true" />
-		<cfscript>
-			var loc = {};
-			loc.matches = REMatch("^(`.*?`)\.?(`.*?`)?.", arguments.string);
-		</cfscript>
-		<cfreturn loc.matches[1] />
+		<cfset var matches = REMatch("^(`.*?`)\.?(`.*?`)?.", arguments.string) />
+		<cfreturn matches[1] />
 	</cffunction>
 	
 	<cffunction name="$doubleQuoteString" output="false" access="public" returntype="string">
 		<cfargument name="string" type="string" required="true" />
-		<cfscript>
-			var loc = {};
-			loc.matches = REMatch("^""(.*?)"".", arguments.string);
-		</cfscript>
-		<cfreturn loc.matches[1] />
+		<cfset var matches = REMatch("^""(.*?)"".", arguments.string) />
+		<cfreturn matches[1] />
 	</cffunction>
 	
 	<cffunction name="$dump" returntype="void" access="public" output="true">
